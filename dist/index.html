@@ -1,0 +1,131 @@
+<!doctype html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>get_hype</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width">
+        <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
+        <!-- build:css(.tmp) styles/main.css -->
+        <link rel="stylesheet" href="styles/main.css">
+        <!-- endbuild -->
+        <!-- build:js scripts/vendor/modernizr.js -->
+        <script src="//cdnjs.cloudflare.com/ajax/libs/modernizr/2.7.1/modernizr.min.js"></script>
+        <!-- endbuild -->
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+        <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/jquery-ui.min.js"></script>
+        <link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/themes/smoothness/jquery-ui.css">
+        <style>
+            @font-face {
+                font-family: "open-sans";
+                src: url("//mozorg.cdn.mozilla.net/media/fonts/OpenSans-Light-webfont.woff") format('woff');
+            }
+            .hype{
+                font-family: "open-sans", "Times New Roman", sans-serif;
+                font-size: 4em;
+                color: #777777;
+            }
+            .hype-counter{
+                font-size: 2.7em;
+            }
+        </style>
+    </head>
+    <body>
+        <!--[if lt IE 10]>
+            <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+        <![endif]-->
+
+
+        <div class="container">
+            <div class="jumbotron shadow"></div>
+        </div>
+
+
+        <script>
+            (function($){
+
+                function hypePad(num, size) {
+                    var s = num+"";
+                    while (s.length < size) s = "0" + s;
+                    return s;
+                }
+
+                function getHype(el){
+
+                    $.ajax({
+                        context: el,
+                        url: "http://hype-rulz.herokuapp.com",
+                        dataType: 'jsonp',
+                        crossDomain: 'true',
+                        data: {
+                            'set' : window.btoa(document.URL)
+                        },
+                        success: function(data){
+                            document.getElementById($(this).attr('id'))
+                                    .getElementsByClassName('hype-counter')[0].innerHTML = hypePad(data.hype, 10);
+
+                        },
+                        error: function(err){
+                            //run silent, run deep
+                        }
+                    });
+                }
+
+                $.widget('ui.hype', {
+                    _create: function(){
+
+                        var hypeId = 'hype-id-'+Math.floor((Math.random()*10000)+1);
+
+                        $('<div>',{
+                            class: 'hype hype-logo',
+                            html: 'hype^'
+                        }).appendTo($(this.element));
+
+                        $('<div>',{
+                            class: 'hype hype-counter',
+                            html: hypePad(1, 10)
+                        }).appendTo($(this.element));
+
+                        this.element.css({
+                            'font-family': 'open-sans',
+                            'cursor' : 'pointer'
+                        });
+
+                        this.element.attr('id', hypeId);
+
+                        this.element.addClass('hype-container');
+
+                        this.element.on('click', function(e){
+                            e.preventDefault();
+                            getHype(document.getElementById(hypeId));
+                        });
+
+                        getHype(this.element);
+                    }
+                });
+
+            })(jQuery);
+
+            $('.jumbotron').hype();
+
+        </script>
+
+        <!-- Google Analytics: change UA-XXXXX-X to be your site's ID. -->
+        <script>
+            (function(b,o,i,l,e,r){b.GoogleAnalyticsObject=l;b[l]||(b[l]=
+            function(){(b[l].q=b[l].q||[]).push(arguments)});b[l].l=+new Date;
+            e=o.createElement(i);r=o.getElementsByTagName(i)[0];
+            e.src='//www.google-analytics.com/analytics.js';
+            r.parentNode.insertBefore(e,r)}(window,document,'script','ga'));
+            ga('create','UA-XXXXX-X');ga('send','pageview');
+        </script>
+
+        <!-- build:js scripts/main.js -->
+        <script data-main="scripts/main" src="bower_components/requirejs/require.js"></script>
+        <!-- endbuild -->
+</body>
+</html>
