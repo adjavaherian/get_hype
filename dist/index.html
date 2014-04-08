@@ -14,7 +14,7 @@
         <link rel="stylesheet" href="styles/main.css">
         <!-- endbuild -->
         <!-- build:js scripts/vendor/modernizr.js -->
-        <script src="//cdnjs.cloudflare.com/ajax/libs/modernizr/2.7.1/modernizr.min.js"></script>
+        <script src="bower_components/modernizr/modernizr.js"></script>
         <!-- endbuild -->
         <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
         <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/jquery-ui.min.js"></script>
@@ -22,15 +22,80 @@
         <style>
             @font-face {
                 font-family: "open-sans";
-                src: url("//mozorg.cdn.mozilla.net/media/fonts/OpenSans-Light-webfont.woff") format('woff');
+                src: url("https://mozorg.cdn.mozilla.net/media/fonts/OpenSans-Light-webfont.woff") format('woff');
             }
-            .hype{
+            .hype-container{
                 font-family: "open-sans", "Times New Roman", sans-serif;
-                font-size: 4em;
+                font-size: 1em;
                 color: #777777;
+                cursor : pointer;
+            }
+            .hype-logo{
+                font-size: 1em;
             }
             .hype-counter{
-                font-size: 2.7em;
+                font-size: 0.7em;
+            }
+
+            /*user defined classes*/
+            .rounded{
+                -moz-border-radius: 5px;
+                -webkit-border-radius: 5px;
+                border-radius: 5px;
+                padding: 5px;
+            }
+            .border{
+                border: 1px solid #dedede;
+            }
+            .border:active {
+                margin: 2px 0 0 2px;
+                border: 1px solid #777777;
+            }
+            p{
+                border-bottom: 1px solid #dedede;
+            }
+            .left{
+                float: left;
+            }
+            .right{
+                float: right;
+            }
+
+            .cat-left{
+                float: left;
+                height: 230px;
+            }
+            .list-right{
+                float: right;
+                clear: none;
+            }
+            .code-blocks{
+                margin: 10px 0;
+            }
+            .both{
+                clear: both;
+            }
+            .other-elements{
+                margin-top: 10px;
+                padding: 10px;
+                background: rgba(255, 120, 201, 0.30);
+                text-align: center;
+            }
+
+            @media screen and (max-width: 480px){
+
+                .cat-left{
+                    float:left;
+                    display:block;
+                    width:100%;
+                }
+
+                .list-right{
+                    float:none;
+                    display:block;
+                    width:100%;
+                    clear: both;
+                }
             }
         </style>
     </head>
@@ -42,6 +107,64 @@
 
         <div class="container">
             <div class="jumbotron shadow"></div>
+            <h3>Extended paragraphs</h3>
+            <p><a href="">Lorem ipsum</a> dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+                tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
+                exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in
+                reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint
+                occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+
+            <h3>Images</h3>
+            <div class="cat-left">
+                <img src="http://i.imgur.com/m6LgS98.jpg" width="300px">
+            </div>
+            <div class="list-right">
+                <h3>List Items</h3>
+                <ul class="demo-ul">
+                    <li>Plaid hella marfa</li>
+                    <li>Lorem ipsum dolor</li>
+                    <li>Chupa cillium eu fugiat</li>
+                </ul>
+                <ol class="demo-ol">
+                    <li>Ullamco laboris nisi</li>
+                    <li>Okcupidatat non proident
+                        <ol>
+                            <li style="color: red">Invisible hype!!! (inspect element)</li>
+                        </ol>
+                    </li>
+                    <li>Desereunt anim id estum</li>
+                </ol>
+            </div>
+
+            <div class="code-blocks both">
+                <h3>Code Blocks</h3>
+                <pre>(function(b,o,i,l,e,r){b.GoogleAnalyticsObject=l;b[l]||(b[l]=function(){(b[l].q=b[l].q||[]).push(arguments)});b[l].l=+new Date;e=o.createElement(i);r=o.getElementsByTagName(i)[0];e.src='//www.google-analytics.com/analytics.js';r.parentNode.insertBefore(e,r)}(window,document,'script','ga'));ga('create','UA-XXXXX-X');ga('send','pageview');</pre>
+            </div>
+            <h3 clear="both">Buttons and Selects</h3>
+            <div class="other-elements both rounded">
+                <div style="display: inline-block">
+                    <button class="mice-button" style="margin-right: 10px">I like mice</button>
+                </div>
+                <span style="font-size: 2em"> with </span>
+                <div style="display: inline-block">
+                    <div class="left">
+                        <select class="wine-select" style="margin-left: 10px">
+                            <option>Select one...</option>
+                            <option>Wine</option>
+                            <option>Cheese</option>
+                        </select>
+                    </div>
+                    <div class="right">
+                        <ul style="list-style: none">
+                            <li class="wine-target">External Destination: </li>
+                        </ul>
+
+                    </div>
+                </div>
+            </div>
+            <h3 clear="both">Anchors</h3>
+            <h2><a href="http://hype-rulz.herokuapp.com/" target="_blank" class="my-anchor">http://hype-rulz.herokuapp.com/#</a></h2>
+            <div class="my-anchor-dest"></div>
         </div>
 
 
@@ -56,18 +179,21 @@
 
                 function getHype(el){
 
+//                    console.log('get', $(el).data('hype-temp'));
+                    var hypeId = window.btoa(document.URL + $(el).data('hype-id'));
+                    var tempId = $(el).data('hype-temp');
+
                     $.ajax({
                         context: el,
                         url: "http://hype-rulz.herokuapp.com",
                         dataType: 'jsonp',
                         crossDomain: 'true',
                         data: {
-                            'set' : window.btoa(document.URL)
+                            'set' : hypeId
                         },
                         success: function(data){
-                            document.getElementById($(this).attr('id'))
-                                    .getElementsByClassName('hype-counter')[0].innerHTML = hypePad(data.hype, 10);
-
+                            $('#'+tempId).find('.hype-counter').html(hypePad(data.hype, 10));
+                            $(this).data({'hype-count': data.hype});
                         },
                         error: function(err){
                             //run silent, run deep
@@ -76,41 +202,210 @@
                 }
 
                 $.widget('ui.hype', {
+
+                    options: {
+                        attach: 'inner',
+                        logo: true,
+                        counter: true,
+                        hypeId : '',
+                        baseClass : 'hype-container',
+                        userClasses: [],
+                        contain: false,
+                        solo: false,
+                        both: false,
+                        destination: '',
+                        css: {
+                            color: '#777777',
+                            position: 'relative',
+                            float : 'none'
+                        }
+                    },
+
+                    _init: function(){
+                        //nada
+                    },
+
                     _create: function(){
 
-                        var hypeId = 'hype-id-'+Math.floor((Math.random()*10000)+1);
+                        var classes = [];
+                        classes.push(this.options.baseClass, this.options.userClasses.join(' '));
 
-                        $('<div>',{
-                            class: 'hype hype-logo',
-                            html: 'hype^'
-                        }).appendTo($(this.element));
+                        var tempId = this.options.hypeId +'_'+ Math.floor(Math.random(1) * 10000),
+                        hypeId = this.options.hypeId,
+                        target = this.element,
+                        destination = target;
 
-                        $('<div>',{
-                            class: 'hype hype-counter',
-                            html: hypePad(1, 10)
-                        }).appendTo($(this.element));
 
-                        this.element.css({
-                            'font-family': 'open-sans',
-                            'cursor' : 'pointer'
+                        var hypeDiv = $('<span>',{
+                            css: this.options.css
+                        }).addClass(classes.join(' '));
+
+                        if(this.options.logo){
+                            $('<span>',{
+                                class: 'hype-logo',
+                                html: 'hype^'
+                            }).appendTo(hypeDiv);
+                        }
+
+                        if(this.options.counter){
+                            $('<span>',{
+                                class: 'hype-counter',
+                                html: hypePad(1, 10)
+                            }).appendTo(hypeDiv);
+                        }
+
+                        if(this.options.contain){
+                            var replacement = $('<div></div>', {
+                                width: target.width(),
+                                height: target.height()
+                            });
+                            replacement.append(target.clone(true));
+                            target.replaceWith(replacement);
+                            target = replacement;
+                            destination = target;
+                        }
+
+                        if(this.options.destination != ''){
+                            destination = $(this.options.destination);
+                        }
+
+                        switch(this.options.attach){
+                            case 'inner':
+                                hypeDiv.appendTo(destination);
+                                break;
+                            case 'after':
+                                hypeDiv.insertAfter(destination);
+                                break;
+                            case 'before':
+                                hypeDiv.insertBefore(destination);
+                                break;
+                            default:
+                                hypeDiv.insertAfter(destination);
+                                break;
+                        }
+
+                        $(target).data({
+                            'hype-id': hypeId,
+                            'hype-temp': tempId,
+                            'hype-count': 0
                         });
 
-                        this.element.attr('id', hypeId);
-
-                        this.element.addClass('hype-container');
-
-                        this.element.on('click', function(e){
-                            e.preventDefault();
-                            getHype(document.getElementById(hypeId));
+                        $(hypeDiv).data({
+                            'hype-id': hypeId,
+                            'hype-temp': tempId,
+                            'hype-count': 0
                         });
 
-                        getHype(this.element);
+                        hypeDiv.attr({
+                           id: tempId
+                        });
+
+                        if(this.options.solo && !this.options.both){
+                            target = hypeDiv;
+                        }
+
+                        if(this.options.both){
+                            $(hypeDiv).on('click', function(e){
+//                            console.log('click', $(this).data());
+                                //e.preventDefault();
+                                getHype(this);
+                            });
+                        }
+
+                        $(target).on('click', function(e){
+//                            console.log('click', $(this).data());
+                            //e.preventDefault();
+                            getHype(this);
+                        });
+
+                        return getHype($(target));
                     }
                 });
 
             })(jQuery);
 
-            $('.jumbotron').hype();
+
+            //instantiate some hype counters
+            $('.jumbotron').hype({
+                attach: 'inner',
+                css: {
+                    'font-size': '2em'
+                }
+            });
+
+            $('p').hype({
+                css: {
+                    float: 'right',
+                    'border-right': '1px solid #dedede',
+                    'border-bottom': '1px solid #dedede',
+                    'border-left': '1px solid #dedede',
+                    'padding': '5px',
+                    'top': '-11px',
+                    'background': 'white'
+
+                },
+                hypeId : 'cool-p',
+                solo: true,
+                attach: 'after'
+            });
+
+            $('img').hype({
+                contain: true,
+                attach: 'inner',
+                userClasses: ['rounded'],
+                css:{
+                    float : 'none',
+                    color: '#00FF00',
+                    top: '-25px',
+                    left: '2px',
+                    'font-size': '1em',
+                    background: 'rgba(0,0,0,0.8)'
+                },
+                hypeId : 'cool-yawn'
+            });
+
+            $('.demo-ul').hype({
+                hypeId: 'demo-ul',
+                attach: 'inner'
+            });
+
+            $('.demo-ol li:nth-child(2)').hype({
+                hypeId: 'ol-2',
+                attach: 'inner',
+                css:{
+                    'display': 'none'
+                }
+            });
+
+            $('pre').hype({
+                hypeId: 'code-block',
+                attach: 'after',
+                css: {
+                    float: 'right'
+                },
+                both: true
+            });
+
+            $('.mice-button').hype({
+                attach: 'after',
+                logo: false,
+                hypeId: 'mouse-button',
+                css: {
+                    display: 'block'
+                }
+            });
+
+            $('.wine-select').hype({
+                attach: 'inner',
+                hypeId: 'wine-select',
+                destination: '.wine-target'
+            });
+
+            $('.my-anchor').hype({
+                attach: 'after',
+                hypeId: 'my-anchor',
+                destination: '.my-anchor-dest'
+            });
 
         </script>
 
