@@ -171,36 +171,6 @@
         <script>
             (function($){
 
-                function hypePad(num, size) {
-                    var s = num+"";
-                    while (s.length < size) s = "0" + s;
-                    return s;
-                }
-
-                function getHype(el){
-
-//                    console.log('get', $(el).data('hype-temp'));
-                    var hypeId = window.btoa(document.URL + $(el).data('hype-id'));
-                    var tempId = $(el).data('hype-temp');
-
-                    $.ajax({
-                        context: el,
-                        url: "http://hype-rulz.herokuapp.com",
-                        dataType: 'jsonp',
-                        crossDomain: 'true',
-                        data: {
-                            'set' : hypeId
-                        },
-                        success: function(data){
-                            $('#'+tempId).find('.hype-counter').html(hypePad(data.hype, 10));
-                            $(this).data({'hype-count': data.hype});
-                        },
-                        error: function(err){
-                            //run silent, run deep
-                        }
-                    });
-                }
-
                 $.widget('ui.hype', {
 
                     options: {
@@ -211,6 +181,7 @@
                         baseClass : 'hype-container',
                         userClasses: [],
                         contain: false,
+                        pad: false,
                         solo: false,
                         both: false,
                         destination: '',
@@ -225,9 +196,44 @@
                         //nada
                     },
 
+                    _hypePad: function(num, size) {
+                        var s = num+"";
+                        while (s.length < size) s = "0" + s;
+                        return s;
+                    },
+
+                    getHype: function(el){
+
+                        var that = this;
+                        var hypeId = window.btoa(document.URL + $(el).data('hype-id'));
+                        var tempId = $(el).data('hype-temp');
+
+                        $.ajax({
+                            context: el,
+                            url: "http://hype-rulz.herokuapp.com",
+                            dataType: 'jsonp',
+                            crossDomain: 'true',
+                            data: {
+                                'set' : hypeId
+                            },
+                            success: function(data){
+                                var hype = data.hype;
+                                if(that.options.pad){
+                                    hype = that._hypePad(data.hype, 10)
+                                }
+                                $('#'+tempId).find('.hype-counter').html(hype);
+                                $(this).data({'hype-count': data.hype});
+                            },
+                            error: function(err){
+                                //run silent, run deep
+                            }
+                        });
+                    },
+
                     _create: function(){
 
-                        var classes = [];
+                        var that = this,
+                        classes = [];
                         classes.push(this.options.baseClass, this.options.userClasses.join(' '));
 
                         var tempId = this.options.hypeId +'_'+ Math.floor(Math.random(1) * 10000),
@@ -250,7 +256,7 @@
                         if(this.options.counter){
                             $('<span>',{
                                 class: 'hype-counter',
-                                html: hypePad(1, 10)
+                                html: ''
                             }).appendTo(hypeDiv);
                         }
 
@@ -308,17 +314,18 @@
                             $(hypeDiv).on('click', function(e){
 //                            console.log('click', $(this).data());
                                 //e.preventDefault();
-                                getHype(this);
+                                that.getHype(this);
                             });
                         }
 
                         $(target).on('click', function(e){
+
 //                            console.log('click', $(this).data());
                             //e.preventDefault();
-                            getHype(this);
+                            that.getHype(this);
                         });
 
-                        return getHype($(target));
+                        return this.getHype($(target));
                     }
                 });
 
@@ -330,7 +337,8 @@
                 attach: 'inner',
                 css: {
                     'font-size': '2em'
-                }
+                },
+                pad: true
             });
 
             $('p').hype({
