@@ -108,7 +108,7 @@
         <div class="container">
             <div class="jumbotron shadow"></div>
             <h3>Extended paragraphs</h3>
-            <p><a href="">Lorem ipsum</a> dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+            <p class="p-example"><a href="">Lorem ipsum</a> dolor sit amet, consectetur adipisicing elit, sed do eiusmod
                 tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
                 exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in
                 reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint
@@ -165,25 +165,34 @@
             <h3 clear="both">Anchors</h3>
             <h2><a href="http://hype-rulz.herokuapp.com/" target="_blank" class="my-anchor">http://hype-rulz.herokuapp.com/#</a></h2>
             <div class="my-anchor-dest"></div>
+
+            <div class="helpful both">
+                <h3>Quick Surveys</h3>
+                <span>Was this helpful?</span> <button class="helpful-yes">Yes</button> <button class="helpful-no">No</button>
+            </div>
         </div>
 
-
         <script>
-            (function($){
 
-                $.widget('ui.hype', {
+            ;(function($, window, document, undefined){
+
+                $.widget('hype.hype', {
 
                     options: {
                         attach: 'inner',
+                        url: '//hype-rulz.herokuapp.com',
                         logo: true,
                         counter: true,
-                        hypeId : '',
+                        hypeId : 'hypeId',
                         baseClass : 'hype-container',
                         userClasses: [],
                         contain: false,
                         pad: false,
                         solo: false,
                         both: false,
+                        disabled: false,
+                        addCookieRemover: false,
+                        clickOnce: false,
                         destination: '',
                         css: {
                             color: '#777777',
@@ -192,8 +201,62 @@
                         }
                     },
 
-                    _init: function(){
-                        //nada
+                    //https://developer.mozilla.org/en-US/docs/Web/API/document.cookie
+                    _cookieApi : (function(){
+
+                        return {
+                            getItem: function (sKey) {
+                                return decodeURIComponent(document.cookie.replace(new RegExp("(?:(?:^|.*;)\\s*" + encodeURIComponent(sKey).replace(/[\-\.\+\*]/g, "\\$&") + "\\s*\\=\\s*([^;]*).*$)|^.*$"), "$1")) || null;
+                            },
+                            setItem: function (sKey, sValue, vEnd, sPath, sDomain, bSecure) {
+                                if (!sKey || /^(?:expires|max\-age|path|domain|secure)$/i.test(sKey)) { return false; }
+                                var sExpires = "";
+                                if (vEnd) {
+                                    switch (vEnd.constructor) {
+                                        case Number:
+                                            sExpires = vEnd === Infinity ? "; expires=Fri, 31 Dec 9999 23:59:59 GMT" : "; max-age=" + vEnd;
+                                            break;
+                                        case String:
+                                            sExpires = "; expires=" + vEnd;
+                                            break;
+                                        case Date:
+                                            sExpires = "; expires=" + vEnd.toUTCString();
+                                            break;
+                                    }
+                                }
+                                document.cookie = encodeURIComponent(sKey) + "=" + encodeURIComponent(sValue) + sExpires + (sDomain ? "; domain=" + sDomain : "") + (sPath ? "; path=" + sPath : "") + (bSecure ? "; secure" : "");
+                                return true;
+                            },
+                            removeItem: function (sKey, sPath, sDomain) {
+                                if (!sKey || !this.hasItem(sKey)) { return false; }
+                                document.cookie = encodeURIComponent(sKey) + "=; expires=Thu, 01 Jan 1970 00:00:00 GMT" + ( sDomain ? "; domain=" + sDomain : "") + ( sPath ? "; path=" + sPath : "");
+                                return true;
+                            },
+                            hasItem: function (sKey) {
+                                return (new RegExp("(?:^|;\\s*)" + encodeURIComponent(sKey).replace(/[\-\.\+\*]/g, "\\$&") + "\\s*\\=")).test(document.cookie);
+                            }
+                        }
+
+                    })(),
+
+                    _setOption: function ( key, value ) {
+                        console.log('in set option');
+                        switch (key) {
+                            case 'optionOne':
+                                //this.options.someValue = doSomethingWith( value );
+                                break;
+                            default:
+                                //this.options[ key ] = value;
+                                break;
+                        }
+
+                        // For UI 1.9 the _super method can be used instead
+                        this._super( "_setOption", key, value );
+                    },
+
+                    _clearCookie: function(){
+                       console.log('clearCookie');
+                      this._cookieApi.removeItem('hypeCookie');
                     },
 
                     _hypePad: function(num, size) {
@@ -207,10 +270,11 @@
                         var that = this;
                         var hypeId = window.btoa(document.URL + $(el).data('hype-id'));
                         var tempId = $(el).data('hype-temp');
+                        //console.log($(el).data('hype-count'))
 
                         $.ajax({
                             context: el,
-                            url: "http://hype-rulz.herokuapp.com",
+                            url: that.options.url,
                             dataType: 'jsonp',
                             crossDomain: 'true',
                             data: {
@@ -223,11 +287,16 @@
                                 }
                                 $('#'+tempId).find('.hype-counter').html(hype);
                                 $(this).data({'hype-count': data.hype});
+                                $(this).attr('data-count', data.hype);
                             },
                             error: function(err){
                                 //run silent, run deep
                             }
                         });
+                    },
+
+                    blurt: function(){
+                        console.log('blurt');
                     },
 
                     _create: function(){
@@ -241,6 +310,28 @@
                         target = this.element,
                         destination = target;
 
+                        if(this._cookieApi.hasItem('hypeCookie')){
+                            //split on pipe and check array for isHelpfulTrue
+                            //console.log('init has cookie', cookieApi.getItem('hypeCookie'));
+                            var prevCookieIds =  this._cookieApi.getItem('hypeCookie').split('|');
+                            prevCookieIds.shift();
+                            var newCookieIds = [];
+                            for(var i in prevCookieIds){
+                                if(prevCookieIds[i] === hypeId){
+                                    console.log('found cookie bit', prevCookieIds[i]);
+                                    this.options.disabled = true;
+                                }else{
+                                    newCookieIds.push(prevCookieIds[i]);
+                                }
+                            }
+                            var joined = newCookieIds.join('|');
+                            this._cookieApi.setItem('hypeCookie', window.btoa(document.URL)+'|'+joined+'|'+hypeId);
+                        }else{
+                            //set new cookie for this domain url append a pipe for future splits
+                            //docCookies.setItem(name, value[, end[, path[, domain[, secure]]]])
+                            this._cookieApi.setItem('hypeCookie', window.btoa(document.URL)+'|'+hypeId, Infinity);
+                            console.log('init no cookie');
+                        }
 
                         var hypeDiv = $('<span>',{
                             css: this.options.css
@@ -290,13 +381,15 @@
                                 break;
                         }
 
-                        $(target).data({
+                        target.data({
                             'hype-id': hypeId,
                             'hype-temp': tempId,
                             'hype-count': 0
                         });
 
-                        $(hypeDiv).data({
+                        target.attr('data-count', 0);
+
+                        hypeDiv.data({
                             'hype-id': hypeId,
                             'hype-temp': tempId,
                             'hype-count': 0
@@ -306,30 +399,61 @@
                            id: tempId
                         });
 
+                        if(this.options.disabled){
+                            target.attr('disabled', 1);
+                        }
+
+                        if(this.options.addCookieRemover){
+                            $('<button>', {
+                                html: 'clear cookies'
+                            }).appendTo(target.parent())
+                                    .on('click', function(){
+                                        that._clearCookie();
+                                    });
+                        }
+
                         if(this.options.solo && !this.options.both){
+                            //console.log('solo', target);
                             target = hypeDiv;
                         }
 
                         if(this.options.both){
-                            $(hypeDiv).on('click', function(e){
+                            hypeDiv.on('click', function(e){
 //                            console.log('click', $(this).data());
                                 //e.preventDefault();
                                 that.getHype(this);
                             });
                         }
 
-                        $(target).on('click', function(e){
+                        target.on('click', function(e){
 
 //                            console.log('click', $(this).data());
-                            //e.preventDefault();
+                            e.preventDefault();
+                            that.element.trigger('blurt');
                             that.getHype(this);
                         });
 
-                        return this.getHype($(target));
+                        that.element.bind('blurt', function(e){
+                            e.preventDefault();
+                            that.blurt();
+//                            for ( var key in options ) {
+//                                console.log( key, options[ key ] );
+//                            }
+                        });
+
+
+                        //return $(target);
+                        return this.getHype(target);
+                    },
+
+                    destroy: function () {
+                        this.element.next().remove();
                     }
                 });
 
-            })(jQuery);
+            })(jQuery, window, document);
+
+
 
 
             //instantiate some hype counters
@@ -341,7 +465,7 @@
                 pad: true
             });
 
-            $('p').hype({
+            $('p.p-example').hype({
                 css: {
                     float: 'right',
                     'border-right': '1px solid #dedede',
@@ -415,16 +539,25 @@
                 destination: '.my-anchor-dest'
             });
 
+            $('.helpful-yes').hype({
+                logo: false,
+                counter: false,
+                hypeId: 'helpful-yes',
+                addCookieRemover: true,
+                clickOnce: true
+            });
+
+
         </script>
 
         <!-- Google Analytics: change UA-XXXXX-X to be your site's ID. -->
         <script>
-            (function(b,o,i,l,e,r){b.GoogleAnalyticsObject=l;b[l]||(b[l]=
-            function(){(b[l].q=b[l].q||[]).push(arguments)});b[l].l=+new Date;
-            e=o.createElement(i);r=o.getElementsByTagName(i)[0];
-            e.src='//www.google-analytics.com/analytics.js';
-            r.parentNode.insertBefore(e,r)}(window,document,'script','ga'));
-            ga('create','UA-XXXXX-X');ga('send','pageview');
+//            (function(b,o,i,l,e,r){b.GoogleAnalyticsObject=l;b[l]||(b[l]=
+//            function(){(b[l].q=b[l].q||[]).push(arguments)});b[l].l=+new Date;
+//            e=o.createElement(i);r=o.getElementsByTagName(i)[0];
+//            e.src='//www.google-analytics.com/analytics.js';
+//            r.parentNode.insertBefore(e,r)}(window,document,'script','ga'));
+//            ga('create','UA-XXXXX-X');ga('send','pageview');
         </script>
 
         <!-- build:js scripts/main.js -->
