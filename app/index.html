@@ -6,7 +6,7 @@
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <title>get_hype</title>
+        <title>Autodesk Helpful</title>
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width">
         <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
@@ -22,18 +22,28 @@
         <style>
             @font-face {
                 font-family: "open-sans";
-                src: url("https://mozorg.cdn.mozilla.net/media/fonts/OpenSans-Light-webfont.woff") format('woff');
+                src: url("//mozorg.cdn.mozilla.net/media/fonts/OpenSans-Light-webfont.woff") format('woff');
             }
-            .hype-container{
+            .helpful{
+                background: lightyellow;
+                pading: 2em;
+                border: 1px solid yellowgreen;
+            }
+
+            button{
+                margin: 0 10px;
+            }
+
+            .helpful-container{
                 font-family: "open-sans", "Times New Roman", sans-serif;
                 font-size: 1em;
                 color: #777777;
                 cursor : pointer;
             }
-            .hype-logo{
+            .helpful-logo{
                 font-size: 1em;
             }
-            .hype-counter{
+            .helpful-counter{
                 font-size: 0.7em;
             }
 
@@ -100,99 +110,33 @@
         </style>
     </head>
     <body>
-        <!--[if lt IE 10]>
-            <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
-        <![endif]-->
-
 
         <div class="container">
-            <div class="jumbotron shadow"></div>
-            <h3>Extended paragraphs</h3>
-            <p class="p-example"><a href="">Lorem ipsum</a> dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-                tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
-                exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in
-                reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint
-                occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-
-            <h3>Images</h3>
-            <div class="cat-left">
-                <img src="http://i.imgur.com/m6LgS98.jpg" width="300px">
-            </div>
-            <div class="list-right">
-                <h3>List Items</h3>
-                <ul class="demo-ul">
-                    <li>Plaid hella marfa</li>
-                    <li>Lorem ipsum dolor</li>
-                    <li>Chupa cillium eu fugiat</li>
-                </ul>
-                <ol class="demo-ol">
-                    <li>Ullamco laboris nisi</li>
-                    <li>Okcupidatat non proident
-                        <ol>
-                            <li style="color: red">Invisible hype!!! (inspect element)</li>
-                        </ol>
-                    </li>
-                    <li>Desereunt anim id estum</li>
-                </ol>
-            </div>
-
-            <div class="code-blocks both">
-                <h3>Code Blocks</h3>
-                <pre>(function(b,o,i,l,e,r){b.GoogleAnalyticsObject=l;b[l]||(b[l]=function(){(b[l].q=b[l].q||[]).push(arguments)});b[l].l=+new Date;e=o.createElement(i);r=o.getElementsByTagName(i)[0];e.src='//www.google-analytics.com/analytics.js';r.parentNode.insertBefore(e,r)}(window,document,'script','ga'));ga('create','UA-XXXXX-X');ga('send','pageview');</pre>
-            </div>
-            <h3 clear="both">Buttons and Selects</h3>
-            <div class="other-elements both rounded">
-                <div style="display: inline-block">
-                    <button class="mice-button" style="margin-right: 10px">I like mice</button>
-                </div>
-                <span style="font-size: 2em;"> with </span>
-                <div style="display: inline-block">
-                    <div class="left">
-                        <select class="wine-select" style="margin-left: 10px">
-                            <option>Select one...</option>
-                            <option>Wine</option>
-                            <option>Cheese</option>
-                        </select>
-                    </div>
-                    <div class="right">
-                        <ul style="list-style: none">
-                            <li class="wine-target">External Destination: </li>
-                        </ul>
-
-                    </div>
-                </div>
-            </div>
-            <h3 clear="both">Anchors</h3>
-            <h2><a href="http://hype-rulz.herokuapp.com/" target="_blank" class="my-anchor">http://hype-rulz.herokuapp.com/#</a></h2>
-            <div class="my-anchor-dest"></div>
-
-            <div class="helpful both">
-                <h3>Quick Surveys</h3>
-                <span>Was this helpful?</span> <button class="helpful-yes">Yes</button> <button class="helpful-no">No</button>
-            </div>
+            <div class="helpful rounded"></div>
         </div>
 
         <script>
 
             ;(function($, window, document, undefined){
 
-                $.widget('hype.hype', {
+                $.widget('autodesk.helpful', {
 
                     options: {
-                        attach: 'inner',
+
                         url: '//hype-rulz.herokuapp.com',
-                        logo: true,
-                        counter: true,
-                        hypeId : 'hypeId',
-                        baseClass : 'hype-container',
-                        userClasses: [],
-                        contain: false,
-                        pad: false,
-                        solo: false,
-                        both: false,
+                        helpfulId : 'helpfulId',
+                        helpfulCookie: 'autodeskHelpfulCookie',
+                        baseClass : 'helpful-container',
+                        question: 'Was this helpful?',
+                        thankYou: 'Thanks for your support',
+                        yes: 'Yes',
+                        no: 'No',
+                        userClasses: '',
+                        headerClasses: '',
+                        questionClasses: '',
+                        buttonClasses: '',
                         disabled: false,
                         addCookieRemover: false,
-                        clickOnce: false,
                         destination: '',
                         css: {
                             color: '#777777',
@@ -227,10 +171,10 @@
                                 document.cookie = encodeURIComponent(sKey) + "=" + encodeURIComponent(sValue) + sExpires + (sDomain ? "; domain=" + sDomain : "") + (sPath ? "; path=" + sPath : "") + (bSecure ? "; secure" : "");
                                 return true;
                             },
-                            removeItem: function (sKey, sPath, sDomain) {
+                            removeItem: function (sKey, sPath, sDomain, callback) {
                                 if (!sKey || !this.hasItem(sKey)) { return false; }
                                 document.cookie = encodeURIComponent(sKey) + "=; expires=Thu, 01 Jan 1970 00:00:00 GMT" + ( sDomain ? "; domain=" + sDomain : "") + ( sPath ? "; path=" + sPath : "");
-                                return true;
+                                return callback();
                             },
                             hasItem: function (sKey) {
                                 return (new RegExp("(?:^|;\\s*)" + encodeURIComponent(sKey).replace(/[\-\.\+\*]/g, "\\$&") + "\\s*\\=")).test(document.cookie);
@@ -241,12 +185,16 @@
 
                     _setOption: function ( key, value ) {
                         console.log('in set option');
+
+                        var self = this;
+
                         switch (key) {
-                            case 'optionOne':
+                            case 'someValue':
                                 //this.options.someValue = doSomethingWith( value );
                                 break;
                             default:
-                                //this.options[ key ] = value;
+                                this.options[ key ] = value;
+                                self.refresh();
                                 break;
                         }
 
@@ -255,39 +203,39 @@
                     },
 
                     _clearCookie: function(){
-                       console.log('clearCookie');
-                      this._cookieApi.removeItem('hypeCookie');
+                        var self = this;
+
+                        console.log('clearCookie');
+                        this._cookieApi.removeItem(this.options.helpfulCookie, false, false, function(){
+                            self.refresh();
+                        });
+
                     },
 
-                    _hypePad: function(num, size) {
-                        var s = num+"";
-                        while (s.length < size) s = "0" + s;
-                        return s;
-                    },
+                    _setResponse: function(el){
 
-                    getHype: function(el){
-
-                        var that = this;
-                        var hypeId = window.btoa(document.URL + $(el).data('hype-id'));
-                        var tempId = $(el).data('hype-temp');
-                        //console.log($(el).data('hype-count'))
+                        console.log($(el).data());
+                        var self = this,
+                            buttonData = window.btoa(document.URL) + $(el).data('ui-response').value,
+                            helpfulCookie = this.options.helpfulCookie,
+                            currentCookie = this._cookieApi.getItem(helpfulCookie) || '';
 
                         $.ajax({
                             context: el,
-                            url: that.options.url,
+                            url: self.options.url,
                             dataType: 'jsonp',
                             crossDomain: 'true',
                             data: {
-                                'set' : hypeId
+                                'set' : buttonData
                             },
                             success: function(data){
-                                var hype = data.hype;
-                                if(that.options.pad){
-                                    hype = that._hypePad(data.hype, 10)
-                                }
-                                $('#'+tempId).find('.hype-counter').html(hype);
-                                $(this).data({'hype-count': data.hype});
-                                $(this).attr('data-count', data.hype);
+                                console.log('success');
+                                var response = data.hype;
+                                //set new cookie for this domain url append a pipe for future splits
+                                //docCookies.setItem(name, value[, end[, path[, domain[, secure]]]])
+                                self._cookieApi.setItem(helpfulCookie, buttonData + '|' + currentCookie, Infinity);
+                                self.refresh();
+
                             },
                             error: function(err){
                                 //run silent, run deep
@@ -295,273 +243,156 @@
                         });
                     },
 
-                    blurt: function(){
-                        console.log('blurt');
+                    _checkCookie: function(){
+                        var self = this,
+                            helpfulCookie = this.options.helpfulCookie;
+
+                        if(self._cookieApi.hasItem(helpfulCookie)){
+                            //split on pipe and check array for isHelpfulTrue
+                            console.log('init has cookie', self._cookieApi.getItem(helpfulCookie));
+                            var prevCookieIds =  self._cookieApi.getItem(helpfulCookie).split('|');
+                            prevCookieIds.pop();
+                            var newCookieIds = [];
+                            for(var i in prevCookieIds){
+                                console.log('each cookie bit', prevCookieIds[i]);
+                                if(prevCookieIds[i] === window.btoa(document.URL)+'true'||'false'){
+                                    console.log('found cookie bit', prevCookieIds[i]);
+                                    self.options.disabled = true;
+                                }
+                            }
+                        }else{
+                            self.options.disabled = false;
+                        }
+                    },
+
+                    _disableButtons: function(){
+                        this.buttonNo.attr('disabled', true);
+                        this.buttonYes.attr('disabled', true);
+                    },
+
+                    _enableButtons: function(){
+                        this.buttonNo.removeAttr('disabled');
+                        this.buttonYes.removeAttr('disabled');
                     },
 
                     _create: function(){
 
-                        var that = this,
-                        classes = [];
-                        classes.push(this.options.baseClass, this.options.userClasses.join(' '));
+                        var self = this,
+                            classes = this.options.baseClass +' '+ this.options.userClasses,
+                            helpfulId = this.options.helpfulId,
+                            target = this.element;
 
-                        var tempId = this.options.hypeId +'_'+ Math.floor(Math.random(1) * 10000),
-                        hypeId = this.options.hypeId,
-                        target = this.element,
-                        destination = target;
+                            this.target = this.element;
 
-                        if(this._cookieApi.hasItem('hypeCookie')){
-                            //split on pipe and check array for isHelpfulTrue
-                            //console.log('init has cookie', cookieApi.getItem('hypeCookie'));
-                            var prevCookieIds =  this._cookieApi.getItem('hypeCookie').split('|');
-                            prevCookieIds.shift();
-                            var newCookieIds = [];
-                            for(var i in prevCookieIds){
-                                if(prevCookieIds[i] === hypeId){
-                                    console.log('found cookie bit', prevCookieIds[i]);
-                                    this.options.disabled = true;
-                                }else{
-                                    newCookieIds.push(prevCookieIds[i]);
-                                }
+                        //Create elements needed for the complete survey
+                        var header = (this.header = $('<h3 />'))
+                                .html('Quick Survey')
+                                .addClass(this.options.headerClasses)
+                                .appendTo(target),
+
+                            question =  (this.question = $('<span />'))
+                                .html(this.options.question)
+                                .addClass(this.options.questionClasses)
+                                .appendTo(target),
+
+                            buttonYes = (this.buttonYes = $('<button />'))
+                                .html(this.options.yes)
+                                .addClass(this.options.buttonClasses + ' helpful-yes')
+                                .data('ui-response', {value: true})
+                                .appendTo(target),
+
+                            buttonNo = (this.buttonNo = $('<button />'))
+                                .html(this.options.no)
+                                .addClass(this.options.buttonClasses + ' helpful-no')
+                                .data('ui-response', {value: false})
+                                .appendTo(target),
+
+                            buttonClear = (self.buttonClear = $('<button />'));
+
+                        //Bind any events
+                        this._bindEvents();
+
+                        this.refresh();
+
+                        //return from this to allow for chaining
+                        return this
+                    },
+
+                    _bindEvents: function(){
+
+                        var self = this,
+                            buttonYes = this.buttonYes,
+                            buttonNo = this.buttonNo,
+                            buttonClear = this.buttonClear,
+                            buttons = buttonYes.add(buttonNo);
+
+                        //Event dispatch and pub / sub binding
+                        buttons.bind({
+                            click: function(){
+                                console.log('click');
+                                self._setResponse(this);
                             }
-                            var joined = newCookieIds.join('|');
-                            this._cookieApi.setItem('hypeCookie', window.btoa(document.URL)+'|'+joined+'|'+hypeId);
+                        });
+
+                        buttonClear.bind({
+                            click: function(){
+                                console.log('clear');
+                                self._clearCookie();
+                            }
+                        });
+
+
+                    },
+
+                    _destroy: function () {
+                        this.element.remove();
+                    },
+
+                    refresh: function(init){
+
+                        this._checkCookie();
+
+                        console.log('disabled: ',this.options.disabled);
+
+                        if(this.options.disabled === true){
+                            console.log('this should be disabled yo');
+                            this.question.html(this.options.thankYou);
+                            this._disableButtons();
                         }else{
-                            //set new cookie for this domain url append a pipe for future splits
-                            //docCookies.setItem(name, value[, end[, path[, domain[, secure]]]])
-                            this._cookieApi.setItem('hypeCookie', window.btoa(document.URL)+'|'+hypeId, Infinity);
-                            console.log('init no cookie');
-                        }
-
-                        var hypeDiv = $('<span>',{
-                            css: this.options.css
-                        }).addClass(classes.join(' '));
-
-                        if(this.options.logo){
-                            $('<span>',{
-                                class: 'hype-logo',
-                                html: 'hype^'
-                            }).appendTo(hypeDiv);
-                        }
-
-                        if(this.options.counter){
-                            $('<span>',{
-                                class: 'hype-counter',
-                                html: ''
-                            }).appendTo(hypeDiv);
-                        }
-
-                        if(this.options.contain){
-                            var replacement = $('<div></div>', {
-                                width: target.width(),
-                                height: target.height()
-                            });
-                            replacement.append(target.clone(true));
-                            target.replaceWith(replacement);
-                            target = replacement;
-                            destination = target;
-                        }
-
-                        if(this.options.destination != ''){
-                            destination = $(this.options.destination);
-                        }
-
-                        switch(this.options.attach){
-                            case 'inner':
-                                hypeDiv.appendTo(destination);
-                                break;
-                            case 'after':
-                                hypeDiv.insertAfter(destination);
-                                break;
-                            case 'before':
-                                hypeDiv.insertBefore(destination);
-                                break;
-                            default:
-                                hypeDiv.insertAfter(destination);
-                                break;
-                        }
-
-                        target.data({
-                            'hype-id': hypeId,
-                            'hype-temp': tempId,
-                            'hype-count': 0
-                        });
-
-                        target.attr('data-count', 0);
-
-                        hypeDiv.data({
-                            'hype-id': hypeId,
-                            'hype-temp': tempId,
-                            'hype-count': 0
-                        });
-
-                        hypeDiv.attr({
-                           id: tempId
-                        });
-
-                        if(this.options.disabled){
-                            target.attr('disabled', 1);
+                            console.log('this should be enabled yosef');
+                            this.question.html(this.options.question);
+                            this._enableButtons();
                         }
 
                         if(this.options.addCookieRemover){
-                            $('<button>', {
-                                html: 'clear cookies'
-                            }).appendTo(target.parent())
-                                    .on('click', function(){
-                                        that._clearCookie();
-                                    });
+                            this.buttonClear
+                            .detach()
+                            .html('Clear cookies')
+                            .appendTo(this.target);
+                        }else{
+                            this.buttonClear
+                            .detach();
                         }
 
-                        if(this.options.solo && !this.options.both){
-                            //console.log('solo', target);
-                            target = hypeDiv;
+                        if(!init) {
+                            this._trigger('refresh');
                         }
 
-                        if(this.options.both){
-                            hypeDiv.on('click', function(e){
-//                            console.log('click', $(this).data());
-                                //e.preventDefault();
-                                that.getHype(this);
-                            });
-                        }
-
-                        target.on('click', function(e){
-
-//                            console.log('click', $(this).data());
-                            e.preventDefault();
-                            that.element.trigger('blurt');
-                            that.getHype(this);
-                        });
-
-                        that.element.bind('blurt', function(e){
-                            e.preventDefault();
-                            that.blurt();
-//                            for ( var key in options ) {
-//                                console.log( key, options[ key ] );
-//                            }
-                        });
-
-
-                        //return $(target);
-                        return this.getHype(target);
-                    },
-
-                    destroy: function () {
-                        this.element.next().remove();
                     }
+
                 });
 
             })(jQuery, window, document);
 
 
-
-
-            //instantiate some hype counters
-            $('.jumbotron').hype({
-                attach: 'inner',
-                css: {
-                    'font-size': '2em'
-                },
-                pad: true
-            });
-
-            $('p.p-example').hype({
-                css: {
-                    float: 'right',
-                    'border-right': '1px solid #dedede',
-                    'border-bottom': '1px solid #dedede',
-                    'border-left': '1px solid #dedede',
-                    'padding': '5px',
-                    'top': '-11px',
-                    'background': 'white'
-
-                },
-                hypeId : 'cool-p',
-                solo: true,
-                attach: 'after'
-            });
-
-            $('img').hype({
-                contain: true,
-                attach: 'inner',
-                userClasses: ['rounded'],
-                css:{
-                    float : 'none',
-                    color: '#00FF00',
-                    top: '-25px',
-                    left: '2px',
-                    'font-size': '1em',
-                    background: 'rgba(0,0,0,0.8)'
-                },
-                hypeId : 'cool-yawn'
-            });
-
-            $('.demo-ul').hype({
-                hypeId: 'demo-ul',
-                attach: 'inner'
-            });
-
-            $('.demo-ol li:nth-child(2)').hype({
-                hypeId: 'ol-2',
-                attach: 'inner',
-                css:{
-                    'display': 'none'
-                }
-            });
-
-            $('pre').hype({
-                hypeId: 'code-block',
-                attach: 'after',
-                css: {
-                    float: 'right'
-                },
-                both: true
-            });
-
-            $('.mice-button').hype({
-                attach: 'after',
-                logo: false,
-                hypeId: 'mouse-button',
-                css: {
-                    display: 'block'
-                }
-            });
-
-            $('.wine-select').hype({
-                attach: 'inner',
-                hypeId: 'wine-select',
-                destination: '.wine-target'
-            });
-
-            $('.my-anchor').hype({
-                attach: 'after',
-                hypeId: 'my-anchor',
-                destination: '.my-anchor-dest'
-            });
-
-            $('.helpful-yes').hype({
-                logo: false,
-                counter: false,
-                hypeId: 'helpful-yes',
-                addCookieRemover: true,
-                clickOnce: true
+            //instantiate some helpful counters
+            $('.helpful').helpful({
+                helpfulId: 'helpful-container',
+                addCookieRemover: true
             });
 
 
         </script>
 
-        <!-- Google Analytics: change UA-XXXXX-X to be your site's ID. -->
-        <script>
-//            (function(b,o,i,l,e,r){b.GoogleAnalyticsObject=l;b[l]||(b[l]=
-//            function(){(b[l].q=b[l].q||[]).push(arguments)});b[l].l=+new Date;
-//            e=o.createElement(i);r=o.getElementsByTagName(i)[0];
-//            e.src='//www.google-analytics.com/analytics.js';
-//            r.parentNode.insertBefore(e,r)}(window,document,'script','ga'));
-//            ga('create','UA-XXXXX-X');ga('send','pageview');
-        </script>
-
-        <!-- build:js scripts/main.js -->
-        <script data-main="scripts/main" src="bower_components/requirejs/require.js"></script>
-        <!-- endbuild -->
 </body>
 </html>
