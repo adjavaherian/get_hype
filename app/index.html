@@ -25,13 +25,14 @@
                 src: url("//mozorg.cdn.mozilla.net/media/fonts/OpenSans-Light-webfont.woff") format('woff');
             }
             .helpful{
-                background: lightyellow;
-                pading: 2em;
-                border: 1px solid yellowgreen;
+                padding: 20px 0 20px 0;
+                border-top: 1px solid #cccccc;
+                border-bottom: 1px solid #cccccc;
+                color: #757575;
             }
 
-            button{
-                margin: 0 10px;
+            .helpful > button{
+                margin-left: 10px;
             }
 
             .helpful-container{
@@ -119,6 +120,9 @@
 
             ;(function($, window, document, undefined){
 
+                console.log('jquery: ', $.fn.jquery);
+                console.log('jquery-ui', $.ui.version);
+
                 $.widget('autodesk.helpful', {
 
                     options: {
@@ -127,14 +131,15 @@
                         helpfulId : 'helpfulId',
                         helpfulCookie: 'autodeskHelpfulCookie',
                         baseClass : 'helpful-container',
-                        question: 'Was this helpful?',
-                        thankYou: 'Thanks for your support',
+                        header: 'Was this article helpful?',
+                        question: 'Please help us improve on the content of this site.  Was this article helpful?',
+                        thankYou: "We're glad you're enjoying our content!",
                         yes: 'Yes',
                         no: 'No',
                         userClasses: '',
                         headerClasses: '',
                         questionClasses: '',
-                        buttonClasses: '',
+                        buttonClasses: 'helpful-button small-button',
                         disabled: false,
                         addCookieRemover: false,
                         destination: '',
@@ -216,9 +221,9 @@
 
                         console.log($(el).data());
                         var self = this,
-                            buttonData = window.btoa(document.URL) + $(el).data('ui-response').value,
-                            helpfulCookie = this.options.helpfulCookie,
-                            currentCookie = this._cookieApi.getItem(helpfulCookie) || '';
+                                buttonData = window.btoa(document.URL) + $(el).data('ui-response').value,
+                                helpfulCookie = this.options.helpfulCookie,
+                                currentCookie = this._cookieApi.getItem(helpfulCookie) || '';
 
                         $.ajax({
                             context: el,
@@ -245,7 +250,7 @@
 
                     _checkCookie: function(){
                         var self = this,
-                            helpfulCookie = this.options.helpfulCookie;
+                                helpfulCookie = this.options.helpfulCookie;
 
                         if(self._cookieApi.hasItem(helpfulCookie)){
                             //split on pipe and check array for isHelpfulTrue
@@ -266,48 +271,50 @@
                     },
 
                     _disableButtons: function(){
-                        this.buttonNo.attr('disabled', true);
-                        this.buttonYes.attr('disabled', true);
+                        this.buttonNo.detach();
+                        this.buttonYes.detach();
                     },
 
                     _enableButtons: function(){
-                        this.buttonNo.removeAttr('disabled');
-                        this.buttonYes.removeAttr('disabled');
+                        this.buttonNo.appendTo(this.target);
+                        this.buttonYes.appendTo(this.target);
                     },
 
                     _create: function(){
 
                         var self = this,
-                            classes = this.options.baseClass +' '+ this.options.userClasses,
-                            helpfulId = this.options.helpfulId,
-                            target = this.element;
+                                classes = this.options.baseClass +' '+ this.options.userClasses,
+                                helpfulId = this.options.helpfulId,
+                                target = this.element;
 
-                            this.target = this.element;
+                        this.target = this.element;
 
                         //Create elements needed for the complete survey
                         var header = (this.header = $('<h3 />'))
-                                .html('Quick Survey')
-                                .addClass(this.options.headerClasses)
-                                .appendTo(target),
+                                        .html(this.options.header)
+                                        .addClass(this.options.headerClasses)
+                                        .appendTo(target),
 
-                            question =  (this.question = $('<span />'))
-                                .html(this.options.question)
-                                .addClass(this.options.questionClasses)
-                                .appendTo(target),
+                                question =  (this.question = $('<span />'))
+                                        .html(this.options.question)
+                                        .addClass(this.options.questionClasses)
+                                        .appendTo(target),
 
-                            buttonYes = (this.buttonYes = $('<button />'))
-                                .html(this.options.yes)
-                                .addClass(this.options.buttonClasses + ' helpful-yes')
-                                .data('ui-response', {value: true})
-                                .appendTo(target),
+                                buttonNo = (this.buttonNo = $('<button />'))
+                                        .html(this.options.no)
+                                        .addClass(this.options.buttonClasses + ' helpful-no')
+                                        .data('ui-response', {value: false})
+                                        .appendTo(target),
 
-                            buttonNo = (this.buttonNo = $('<button />'))
-                                .html(this.options.no)
-                                .addClass(this.options.buttonClasses + ' helpful-no')
-                                .data('ui-response', {value: false})
-                                .appendTo(target),
+                                buttonYes = (this.buttonYes = $('<button />'))
+                                        .html(this.options.yes)
+                                        .addClass(this.options.buttonClasses + ' helpful-yes')
+                                        .data('ui-response', {value: true})
+                                        .appendTo(target),
 
-                            buttonClear = (self.buttonClear = $('<button />'));
+                                buttonClear = (self.buttonClear = $('<button />')
+                                        .addClass(this.options.buttonClasses)
+                                        );
 
                         //Bind any events
                         this._bindEvents();
@@ -321,10 +328,10 @@
                     _bindEvents: function(){
 
                         var self = this,
-                            buttonYes = this.buttonYes,
-                            buttonNo = this.buttonNo,
-                            buttonClear = this.buttonClear,
-                            buttons = buttonYes.add(buttonNo);
+                                buttonYes = this.buttonYes,
+                                buttonNo = this.buttonNo,
+                                buttonClear = this.buttonClear,
+                                buttons = buttonYes.add(buttonNo);
 
                         //Event dispatch and pub / sub binding
                         buttons.bind({
@@ -366,12 +373,12 @@
 
                         if(this.options.addCookieRemover){
                             this.buttonClear
-                            .detach()
-                            .html('Clear cookies')
-                            .appendTo(this.target);
+                                    .detach()
+                                    .html('Clear cookies')
+                                    .appendTo(this.target);
                         }else{
                             this.buttonClear
-                            .detach();
+                                    .detach();
                         }
 
                         if(!init) {
